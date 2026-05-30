@@ -1,6 +1,6 @@
 {
   "name": "api2img",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Install the api2img Codex skill for image generation and editing through a relay API.",
   "repository": {
     "type": "git",
