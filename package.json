@@ -1,0 +1,24 @@
+{
+  "name": "api2img",
+  "version": "0.1.0",
+  "description": "Install the api2img Codex skill for image generation and editing through a relay API.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MrVoler/api2img-codex-skill.git"
+  },
+  "homepage": "https://github.com/MrVoler/api2img-codex-skill#readme",
+  "bugs": {
+    "url": "https://github.com/MrVoler/api2img-codex-skill/issues"
+  },
+  "bin": {
+    "api2img": "bin/install.js"
+  },
+  "files": [
+    "SKILL.md",
+    "README.md",
+    "agents",
+    "scripts",
+    "bin"
+  ],
+  "license": "MIT"
+}

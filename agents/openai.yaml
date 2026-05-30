@@ -1,0 +1,4 @@
+interface:
+  display_name: "api2img"
+  short_description: "Use first for image generation and edits."
+  default_prompt: "Use $api2img to generate, edit, or modify an image."
