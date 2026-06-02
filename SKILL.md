@@ -35,9 +35,7 @@ npx api2img configure --clear
 
 `--clear` only removes api2img's own saved configuration and secret. It must not be combined with `--base-url` or `--update-key`, and it must not modify `OPENAI_API_KEY`, `OPENAI_BASE_URL`, or other provider variables.
 
-Do not ask the user to paste keys into chat. Do not pass keys on the command line. Do not print the key after storing it.
-
-When updating or entering the API key, do not ask the user to wait for a new window. Tell them to run the configuration command and enter the key directly in the current terminal prompt.
+By default, prefer asking the user to run `npx api2img configure --update-key` and enter the key in the current terminal prompt. If the user prefers, they may also send the key directly in chat and you can store it with `npx api2img configure --api-key <key>`. Do not print the key back after storing it.
 
 ## Privacy
 

@@ -8,6 +8,11 @@ When the user asks for a real generated or edited image file, do not reinterpret
 
 Do not create your own config files, temp files, env files, or custom storage for api2img settings. Always use `npx api2img configure --base-url <url>` and `npx api2img configure --update-key`.
 
+After saving the base URL, offer the user two ways to provide the API key:
+
+- Option 1: ask them to run `npx api2img configure --update-key` in the current terminal and enter the key there
+- Option 2: let them send the key directly in chat, then store it by running `npx api2img configure --api-key <key>`
+
 Before the first uploaded-image edit in the current conversation/task, ask for confirmation:
 
 `提示：你上传的图片可能会被第三方 API 获取，请注意自己的信息安全。请回复确认继续，我再上传图片进行修改。`

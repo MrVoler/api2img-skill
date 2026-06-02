@@ -121,7 +121,7 @@ Advanced options:
 }
 
 function printNextSteps(agent, scope, target) {
-  const keyPrompt = "请在当前终端里安全输入你的 api key。";
+  const keyPrompt = "接下来有两种方式配置你的 api key。";
 
   console.log("");
   console.log("Agent guidance:");
@@ -129,13 +129,16 @@ function printNextSteps(agent, scope, target) {
   console.log("- Continue by asking the user: 请输入你生成图片的中转 API 地址：");
   console.log("- After the user provides the URL, help save it by using: npx api2img configure --base-url <url>");
   console.log(`- Then tell the user: ${keyPrompt}`);
-  console.log("- Store the key by using: npx api2img configure --update-key");
+  console.log("- Option 1: ask the user to run `npx api2img configure --update-key` in the current terminal and enter the key there.");
+  console.log("- Option 2: let the user send the key directly here, then store it by using: npx api2img configure --api-key <key>");
   console.log("- After configuration is complete, continue with image generation or image editing.");
   console.log("- Do not write your own config files or save api2img settings manually.");
   console.log("");
   console.log("Suggested conversation flow:");
   console.log("- 请输入你生成图片的中转 API 地址：");
   console.log(`- ${keyPrompt}`);
+  console.log("- 方案 1：你在当前终端里运行 `npx api2img configure --update-key`，然后按提示输入。");
+  console.log("- 方案 2：你直接把 Key 发给我，我替你完成配置。");
   console.log("- 现在可以继续帮你生成图片了。");
   console.log("");
   console.log(`Installed mode: ${agent} (${scope})`);
