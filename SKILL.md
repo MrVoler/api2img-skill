@@ -94,7 +94,9 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\ski
 
 ## Reliability
 
-- Image generation can take several minutes. Use 300000-600000 ms timeouts for a single 1024x1024 image, and longer for edits, batches, or large outputs.
+- Image generation can take several minutes. For a single-image generation attempt, start with a 300000 ms (5 minute) timeout.
+- If a single-image generation times out, increase the timeout by 180000 ms (3 minutes) on the next retry. Use this sequence: 5 minutes, 8 minutes, 11 minutes, 14 minutes, 17 minutes.
+- Retry at most 5 timeouts for the same single-image request. After the fifth timeout, stop retrying automatically and ask the user to check whether their image relay endpoint, upstream provider, or network path is having problems.
 - Do not treat a shell timeout as proof that generation failed. First check the expected output path and `output/imagegen/` for new files.
 - If the command times out, check whether a Python/imagegen process is still running before retrying.
 - If an output file appears after a timeout, inspect it and continue from it instead of rerunning the same prompt.

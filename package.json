@@ -1,6 +1,6 @@
 {
   "name": "api2img",
-  "version": "0.1.5",
+  "version": "0.1.9",
   "description": "Install the api2img skill for relay-API-based image generation and editing across Codex and other agents.",
   "repository": {
     "type": "git",
@@ -17,6 +17,7 @@
     "SKILL.md",
     "README.md",
     "README.en.md",
+    "assets",
     "agents",
     "adapters",
     "core",

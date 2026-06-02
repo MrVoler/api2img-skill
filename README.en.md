@@ -10,12 +10,7 @@ api2img is designed for people who use agents through a relay API and also need 
 
 Supports installable agents such as `Codex`, `Claude Code`, `OpenClaw`, and `Hermes`, and is also compatible with other agents that can be connected manually.
 
-## Advantages
-
-- **Simple**: Install with one command and supports automatic agent detection.
-- **Secure**: The API key is stored locally using the secure storage available on the current system whenever possible, so you do not need to paste the key into chat.
-- **Fully compatible**: Supports agents with installable skills on Windows, macOS, and Linux.
-- **No environment pollution**: The image API key uses an independent name and is stored securely. It does not overwrite your existing `OPENAI_API_KEY`, `OPENAI_BASE_URL`, or other variables.
+![api2img overview](assets/readme-en-cover.jpg)
 
 ## Installation
 

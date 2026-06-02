@@ -4,29 +4,17 @@
 
 ## 功能
 
-`让任何使用非官方 API-Key 的 Agent 具备接近原生的生图能力。`
+**`让任何使用非官方 API-Key 的 Agent 具备接近原生的生图能力。`**
 
 api2img 专门面向通过中转 API 使用 Agent，同时又有图片生成和图片编辑需求的人。
 
 支持 `Codex`、`Claude Code`、`OpenClaw`、`Hermes` 等可安装技能的 Agent，也兼容其他可手动接入的 Agent。
 
-## 优势
-
-- **简单**：一条指令安装，并支持自动识别 Agent。
-- **安全**：API Key 会优先使用当前系统可用的本机安全存储，不要求把密钥贴到聊天里。
-- **全兼容**：支持 Windows、macOS、Linux 系统下，所有可安装技能的 Agent。
-- **不污染环境**：生图的 API-Key 独立命名，安全储存，不会覆盖你原来的 `OPENAI_API_KEY`、`OPENAI_BASE_URL` 等变量。
-
+![api2img 说明图](assets/readme-cn-cover.jpg)
 
 ## 安装
 
-方式1（新手推荐）复制以下指令给 Agent：
-
-```powershell
-帮我安装技能：npx api2img
-```
-
-方式2：命令行安装
+复制以下指令发给 Agent：
 
 ```powershell
 npx api2img

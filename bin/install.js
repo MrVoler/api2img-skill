@@ -8,6 +8,7 @@ const { AGENTS, SCOPES, detectAgent, resolveTarget } = require("../core/agent-ta
 const packageRoot = path.resolve(__dirname, "..");
 const home = process.env.USERPROFILE || process.env.HOME;
 const cwd = process.cwd();
+const platform = process.platform;
 
 if (!home) {
   console.error("Cannot find USERPROFILE or HOME. Please install manually into an agent skill directory.");
@@ -89,7 +90,61 @@ function parseArgs(argv) {
 }
 
 function printHelp() {
-  console.log("Usage: npx api2img [--agent auto|codex|claude-code|openclaw|hermes|generic] [--scope global|project] [--workspace <path>] [--target <path>] [--force] [--print-plan]");
+  console.log(`
+api2img
+
+Install:
+  npx api2img
+  npx api2img --scope project
+  npx api2img --agent claude-code
+  npx api2img --print-plan
+
+Configure:
+  npx api2img configure --base-url https://your-relay.example.com
+  npx api2img configure --update-key
+  npx api2img configure --clear
+  npx api2img doctor
+
+Generate / Edit:
+  npx api2img generate --prompt "生成一张未来城市夜景图"
+  npx api2img edit --image input.png --prompt "把背景换成雪山"
+
+Natural language you can tell your agent:
+  - 帮我安装 api2img
+  - 把 api2img 安装成全局技能
+  - 把 api2img 安装到当前项目
+  - 帮我配置 api2img 的 base url
+  - 帮我更新 api2img 的 api key
+  - 用 api2img 生成一张图
+  - 用 api2img 修改这张图
+
+Advanced options:
+  npx api2img [--agent auto|codex|claude-code|openclaw|hermes|generic] [--scope global|project] [--workspace <path>] [--target <path>] [--force] [--print-plan]
+`.trim());
+}
+
+function printNextSteps(agent, scope, target) {
+  const keyPrompt = platform === "win32"
+    ? "请在新打开的窗口中安全输入你的 api key。"
+    : "接下来我会引导你安全输入你的 api key。";
+
+  console.log("");
+  console.log("Agent guidance:");
+  console.log("- Installation is complete. Do not stop here.");
+  console.log("- Continue by asking the user: 请输入你生成图片的中转 API 地址：");
+  console.log("- After the user provides the URL, help save it by using: npx api2img configure --base-url <url>");
+  console.log(`- Then tell the user: ${keyPrompt}`);
+  console.log("- Store the key by using: npx api2img configure --update-key");
+  console.log("- After configuration is complete, continue with image generation or image editing.");
+  console.log("- Do not write your own config files or save api2img settings manually.");
+  console.log("");
+  console.log("Suggested conversation flow:");
+  console.log("- 请输入你生成图片的中转 API 地址：");
+  console.log(`- ${keyPrompt}`);
+  console.log("- 现在可以继续帮你生成图片了。");
+  console.log("");
+  console.log(`Installed mode: ${agent} (${scope})`);
+  console.log(`Installed path: ${target}`);
 }
 
 function pathExists(targetPath) {
@@ -210,9 +265,10 @@ async function main() {
     copyEntry(entry, target);
   }
 
-  console.log(`api2img installed for ${resolvedAgent} (${options.scope}) at: ${target}`);
+  console.log("api2img has been installed.");
+  printNextSteps(resolvedAgent, options.scope, target);
   if (resolvedAgent === "generic") {
-    console.log("Point your agent at this directory manually if it does not auto-discover skills.");
+    console.log("If your agent does not auto-discover skills, point it to this directory manually.");
   }
 }
 
