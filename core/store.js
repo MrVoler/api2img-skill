@@ -1,6 +1,4 @@
 const fs = require("fs");
-const path = require("path");
-const childProcess = require("child_process");
 const { getSecretState, saveSecret: saveSecretValue, clearSecret, describeBackend } = require("./secrets");
 const {
   configFile,
@@ -54,72 +52,23 @@ function clearAll() {
   }
 }
 
-function legacyWindowsState(scriptDir) {
-  const result = {
-    apiKey: null,
-    baseUrl: process.env.CODEX_API2IMG_BASE_URL || null,
-    backend: null,
-    keyFileExists: false,
-    keyFilePath: null,
-  };
-
-  if (platformName() !== "win32" || !scriptDir) {
-    return result;
-  }
-
-  const keyFile = path.join(scriptDir, "api2img-api-key.dpapi.txt");
-  result.keyFilePath = keyFile;
-  if (fs.existsSync(keyFile)) {
-    result.keyFileExists = true;
-    result.backend = "windows-dpapi-legacy";
-    result.apiKey = decryptLegacyWindowsKey(keyFile);
-  }
-
-  return result;
-}
-
-function decryptLegacyWindowsKey(keyFile) {
-  if (platformName() !== "win32" || !fs.existsSync(keyFile)) {
-    return null;
-  }
-
-  const command = [
-    "$encryptedKey = (Get-Content -Raw -LiteralPath $args[0]).Trim()",
-    "$secureKey = ConvertTo-SecureString -String $encryptedKey",
-    "$credential = [System.Management.Automation.PSCredential]::new('api2img', $secureKey)",
-    "$credential.GetNetworkCredential().Password",
-  ].join("; ");
-
-  try {
-    const output = childProcess.execFileSync(
-      "powershell",
-      ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", command, keyFile],
-      { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }
-    );
-    return output.trim() || null;
-  } catch {
-    return null;
-  }
-}
-
-function runtimeState(scriptDir) {
+function runtimeState() {
   const config = loadConfig();
   const secret = loadSecret();
-  const legacy = legacyWindowsState(scriptDir);
 
   return {
-    baseUrl: config.baseUrl || legacy.baseUrl || null,
-    apiKey: secret.apiKey || legacy.apiKey || null,
-    secretBackend: secret.backend || legacy.backend || "none",
-    configured: Boolean((config.baseUrl || legacy.baseUrl) && (secret.apiKey || legacy.apiKey || legacy.backend)),
+    baseUrl: config.baseUrl || null,
+    apiKey: secret.apiKey || null,
+    secretBackend: secret.backend || "none",
+    configured: Boolean(config.baseUrl && secret.apiKey),
     configPath: configFile(),
     secretPath: secret.apiKey ? "managed-by-backend" : null,
     platform: platformName(),
     migration: {
       hasCrossPlatformConfig: Boolean(config.baseUrl || secret.apiKey),
-      hasLegacyWindowsKeyFile: legacy.keyFileExists,
-      legacyWindowsKeyFilePath: legacy.keyFilePath,
-      legacyWindowsKeyReadable: Boolean(legacy.apiKey),
+      hasLegacyWindowsKeyFile: false,
+      legacyWindowsKeyFilePath: null,
+      legacyWindowsKeyReadable: false,
     },
     secretBackendInfo: describeBackend(),
     secretFallbackUsed: Boolean(secret.fallbackUsed),

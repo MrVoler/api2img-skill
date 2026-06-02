@@ -29,10 +29,4 @@ Timeout policy for single-image generation:
 - Then add 3 minutes each retry: 8, 11, 14, 17 minutes
 - After 5 timeouts, stop retrying and ask the user to check whether their relay endpoint, upstream image provider, or network path has a problem
 
-Legacy wrappers are still available when needed:
-
-- `scripts/configure-api2img.ps1` for base URL and key setup
-- `scripts/invoke-api2img.ps1` for `generate` and `edit`
-- `scripts/load-api2img-env.ps1` for loading the isolated runtime env
-
 Do not overwrite the user's normal `OPENAI_API_KEY` or `OPENAI_BASE_URL`.

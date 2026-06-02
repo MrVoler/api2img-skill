@@ -4,23 +4,17 @@
 
 ## Features
 
-`Give any agent using a non-official API key near-native image generation capability.`
+**`Give any Agent using a non-official API key near-native image generation capability.`**
 
 api2img is designed for people who use agents through a relay API and also need image generation and image editing.
 
-Supports installable agents such as `Codex`, `Claude Code`, `OpenClaw`, and `Hermes`, and is also compatible with other agents that can be connected manually.
+Supports installable Agents such as `Codex`, `Claude Code`, `OpenClaw`, and `Hermes`, and is also compatible with other Agents that can be connected manually.
 
 ![api2img overview](assets/readme-en-cover.jpg)
 
 ## Installation
 
-Method 1 (recommended for beginners): copy the following command to your agent:
-
-```powershell
-Please help me install the skill: npx api2img
-```
-
-Method 2: install from the command line
+Copy the following command and send it to your Agent:
 
 ```powershell
 npx api2img
@@ -34,16 +28,16 @@ Built by a friend, low price with volume:
 
 - Personal request data is deleted every day, privacy-friendly
 - Supports image generation (1k image = RMB 0.01 each, 2k image = RMB 0.02 each, 4k image = RMB 0.03 each)
-- Supports both Claude Code and Codex (RMB 8.8 = USD 100 API quota, very low price, model verification supported)
+- Supports both Claude Code and Codex (RMB 8.8 = USD 100 API quota, floor price, model verification supported)
 
 ---
 
 ## Usage
 
-It will be automatically called by the agent when needed, and you can also use it for regular image generation, for example:
+It will be automatically called by the Agent when needed, and it can also be used for normal image generation, for example:
 
 - [Generate] Generate an xxx image
-- [Edit] Replace a specific part of the image
+- [Edit] Replace a certain part of the image
 - [Upload] Modify xxx in the image I uploaded
 
 ## Supported Commands
@@ -63,5 +57,5 @@ Configuration:
 
 ## Privacy Statement
 
-- This skill itself does not proactively upload your other local data, and you can also ask the Agent to perform a security review first.
-- When generating images, the uploaded images and prompts will be sent to the third-party relay provider you configured. Please avoid processing ID documents, faces, work secrets, or other private and sensitive content whenever possible.
+- This skill does not upload any of your data.
+- When generating images, your prompts and uploaded images will pass through the third-party API relay provider you configured. Please do not process ID documents, faces, work secrets, or other private and sensitive content.

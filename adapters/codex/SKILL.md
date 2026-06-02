@@ -5,7 +5,7 @@ description: Use first whenever the user asks to generate, edit, or modify an im
 
 # api2img
 
-Use the shared PowerShell runtime in `scripts/` to configure api2img, generate images, and edit existing images.
+Use the shared `npx api2img ...` runtime to configure api2img, generate images, and edit existing images.
 
 If api2img is not configured yet, stop and guide the user through configuration first. Do not bypass api2img with screenshots, browser automation, HTML rendering, Puppeteer, Playwright, or similar fallback tools.
 
@@ -25,9 +25,6 @@ Primary entry points:
 - `npx api2img configure --clear`
 - `npx api2img generate ...`
 - `npx api2img edit ...`
-- `scripts/configure-api2img.ps1`
-- `scripts/invoke-api2img.ps1`
-- `scripts/load-api2img-env.ps1`
 
 Timeout policy for single-image generation:
 

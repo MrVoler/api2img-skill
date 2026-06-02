@@ -8,4 +8,4 @@ This folder contains agent-specific adapter files that wrap the shared api2img r
 - `hermes/` contains Hermes skill files.
 - `generic/` contains a fallback prompt/instruction file for unsupported agents.
 
-Shared runtime scripts live in `scripts/`.
+The shared runtime is the cross-platform `npx api2img ...` CLI.

@@ -1,9 +1,8 @@
-const path = require("path");
 const readline = require("readline");
 const fs = require("fs");
 const { loadConfig, saveConfig, loadSecret, saveSecret, clearAll, runtimeState } = require("./store");
 const { stateDir } = require("./paths");
-const scriptsDir = path.resolve(__dirname, "..", "scripts");
+const path = require("path");
 
 function parseArgs(argv) {
   const args = { _: [] };
@@ -240,19 +239,19 @@ async function configureCommand(args) {
 }
 
 function doctorCommand() {
-  const state = runtimeState(scriptsDir);
+  const state = runtimeState();
   console.log(JSON.stringify(state, null, 2));
   return state.configured ? 0 : 1;
 }
 
 function envCommand() {
-  const state = runtimeState(scriptsDir);
+  const state = runtimeState();
   console.log(JSON.stringify(state, null, 2));
   return state.configured ? 0 : 1;
 }
 
 async function runImageCommand(commandName, rawArgs) {
-  const state = runtimeState(scriptsDir);
+  const state = runtimeState();
   if (!state.baseUrl || !state.apiKey) {
     throw new Error("api2img is not configured. Run `api2img configure --base-url <url> --api-key <key>` first.");
   }

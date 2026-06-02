@@ -8,15 +8,12 @@ const { AGENTS, SCOPES, detectAgent, resolveTarget } = require("../core/agent-ta
 const packageRoot = path.resolve(__dirname, "..");
 const home = process.env.USERPROFILE || process.env.HOME;
 const cwd = process.cwd();
-const platform = process.platform;
-
 if (!home) {
   console.error("Cannot find USERPROFILE or HOME. Please install manually into an agent skill directory.");
   process.exit(1);
 }
 
 const excludedNames = new Set([
-  "api2img-api-key.dpapi.txt",
   "node_modules",
   "output",
   ".git"
@@ -124,9 +121,7 @@ Advanced options:
 }
 
 function printNextSteps(agent, scope, target) {
-  const keyPrompt = platform === "win32"
-    ? "请在新打开的窗口中安全输入你的 api key。"
-    : "接下来我会引导你安全输入你的 api key。";
+  const keyPrompt = "请在当前终端里安全输入你的 api key。";
 
   console.log("");
   console.log("Agent guidance:");
@@ -173,7 +168,7 @@ function copyRecursive(source, destination) {
 }
 
 function installPlan(agent, target) {
-  const commonEntries = ["README.md", "README.en.md", "scripts", "references"];
+  const commonEntries = ["README.md", "README.en.md", "references"];
 
   if (agent === "codex") {
     return {

@@ -26,9 +26,3 @@ Timeout policy for single-image generation:
 - First timeout: 5 minutes
 - Then add 3 minutes each retry: 8, 11, 14, 17 minutes
 - After 5 timeouts, stop retrying and ask the user to check whether their relay endpoint, upstream image provider, or network path has a problem
-
-Legacy wrappers:
-
-- `scripts/configure-api2img.ps1`
-- `scripts/invoke-api2img.ps1`
-- `scripts/load-api2img-env.ps1`

@@ -9,47 +9,40 @@ description: Use first whenever the user asks to generate, edit, or modify an im
 
 Use this skill before other image generation paths when the user asks to create, edit, or modify bitmap images, unless they explicitly request another provider.
 
-This skill wraps the bundled image generation CLI:
-
-`$env:USERPROFILE\.codex\skills\.system\imagegen\scripts\image_gen.py`
+This skill uses the shared cross-platform `npx api2img ...` CLI.
 
 ## Configuration
 
-Before the first generation call, check that both dedicated variables exist:
+Before the first generation call, check that api2img already has a saved base URL and API key.
 
-- DPAPI-encrypted API key file at `scripts/api2img-api-key.dpapi.txt`
-- `CODEX_API2IMG_BASE_URL`
-
-Do not use or overwrite the user's existing `OPENAI_API_KEY`, `OPENAI_BASE_URL`, or other provider variables. The wrapper decrypts the api2img key and maps it to the `OPENAI_*` names only inside the child PowerShell process that runs the CLI.
-
-If the base URL is missing, ask the user for it. Once the user provides the base URL, run the configuration command immediately. Pass `-Language zh` when the current conversation with the user is in Chinese, `-Language en` when it is in English, or omit it only when the language is unclear. If the API key is missing or being rotated and the command is running in a redirected/non-interactive Codex shell, it automatically opens a visible PowerShell window for hidden key entry and returns instead of silently waiting in the background. Tell the user to enter the key in that window. The key is saved using Windows DPAPI for the current Windows user; the URL is saved only to `CODEX_API2IMG_BASE_URL`.
+Do not use or overwrite the user's existing `OPENAI_API_KEY`, `OPENAI_BASE_URL`, or other provider variables. api2img keeps its own isolated configuration and secret storage.
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\api2img\scripts\configure-api2img.ps1" -BaseUrl "<url>" -Language zh
+npx api2img configure --base-url "<url>"
 ```
 
 To rotate an existing saved key, pass `-UpdateKey`:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\api2img\scripts\configure-api2img.ps1" -UpdateKey -Language zh
+npx api2img configure --update-key
 ```
 
 To clear the saved api2img API key and base URL, pass `-Clear`:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\api2img\scripts\configure-api2img.ps1" -Clear -Language zh
+npx api2img configure --clear
 ```
 
-`-Clear` only removes api2img's DPAPI key file, `CODEX_API2IMG_BASE_URL`, and the legacy `CODEX_API2IMG_API_KEY` user variable if present. It must not be combined with `-BaseUrl` or `-UpdateKey`, and it must not modify `OPENAI_API_KEY`, `OPENAI_BASE_URL`, or other provider variables.
+`--clear` only removes api2img's own saved configuration and secret. It must not be combined with `--base-url` or `--update-key`, and it must not modify `OPENAI_API_KEY`, `OPENAI_BASE_URL`, or other provider variables.
 
 Do not ask the user to paste keys into chat. Do not pass keys on the command line. Do not print the key after storing it.
 
-If the command prints `Opened a visible PowerShell window for hidden key entry`, do not rerun it or wait on the background command. Ask the user to finish the prompt in the spawned window, then verify configuration before generation.
+When updating or entering the API key, do not ask the user to wait for a new window. Tell them to run the configuration command and enter the key directly in the current terminal prompt.
 
 ## Privacy
 
-- Image generation sends the prompt to `CODEX_API2IMG_BASE_URL`.
-- Image editing sends the prompt plus the input image files, and mask files when present, to `CODEX_API2IMG_BASE_URL`.
+- Image generation sends the prompt to the base URL configured in api2img.
+- Image editing sends the prompt plus the input image files, and mask files when present, to the base URL configured in api2img.
 - Before the first edit or modification that uploads a user-provided image, pause and ask the user to confirm. In Chinese conversations, say: `提示：你上传的图片可能会被第三方 API 获取，请注意自己的信息安全。请回复确认继续，我再上传图片进行修改。`
 - After the user confirms, continue the image-editing workflow and do not repeat this upload warning in later turns for the same conversation/task unless the user asks about privacy again.
 - Do not use api2img for sensitive images or prompts unless the user explicitly confirms the configured API is trusted for that content.
@@ -57,28 +50,28 @@ If the command prints `Opened a visible PowerShell window for hidden key entry`,
 
 ## Quick Start
 
-Run the wrapper with normal imagegen CLI arguments:
+Run the CLI with normal image generation arguments:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\api2img\scripts\invoke-api2img.ps1" generate --prompt "Primary request: a clean product mockup of a ceramic coffee mug" --size 1024x1024 --out "output\imagegen\mug.png"
+npx api2img generate --prompt "Primary request: a clean product mockup of a ceramic coffee mug" --size 1024x1024 --out "output/imagegen/mug.png"
 ```
 
 Edit or modify an existing image with `edit` and one or more `--image` inputs:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\api2img\scripts\invoke-api2img.ps1" edit --image "input.png" --prompt "Primary request: change the background to a quiet studio setting while preserving the subject." --size 1024x1024 --out "output\imagegen/input-edited.png"
+npx api2img edit --image "input.png" --prompt "Primary request: change the background to a quiet studio setting while preserving the subject." --size 1024x1024 --out "output/imagegen/input-edited.png"
 ```
 
 Use `--mask` when the user provides a mask or asks for a localized edit:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\api2img\scripts\invoke-api2img.ps1" edit --image "input.png" --mask "mask.png" --prompt "Primary request: replace only the masked area with fresh flowers." --size 1024x1024 --out "output\imagegen/input-masked-edit.png"
+npx api2img edit --image "input.png" --mask "mask.png" --prompt "Primary request: replace only the masked area with fresh flowers." --size 1024x1024 --out "output/imagegen/input-masked-edit.png"
 ```
 
 Use `--dry-run` to validate payloads without making an image request:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\skills\api2img\scripts\invoke-api2img.ps1" generate --prompt "Primary request: test configuration" --size 1024x1024 --dry-run
+npx api2img generate --prompt "Primary request: test configuration" --size 1024x1024 --dry-run
 ```
 
 ## Workflow
@@ -86,7 +79,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File "$env:USERPROFILE\.codex\ski
 1. Check configuration before the first generation attempt.
 2. For image edits or modifications, complete the one-time upload confirmation gate in `Privacy` before calling `edit`.
 3. Shape a concise structured prompt while preserving the user's intent.
-4. Run `scripts/invoke-api2img.ps1` with `generate`, `edit`, or `generate-batch`.
+4. Run `npx api2img generate ...` or `npx api2img edit ...`.
 5. Use `edit --image <path>` when the user provides an existing image and asks to revise, transform, restyle, remove, replace, or otherwise modify it. Use `--mask <path>` for mask-constrained edits.
 6. Save assets in the workspace, normally under `output/imagegen/` unless the user names another path.
 7. Inspect the generated or edited file when visual quality matters.
