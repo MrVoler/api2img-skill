@@ -15,6 +15,7 @@ $ErrorActionPreference = "Stop"
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $keyFile = Join-Path $scriptDir "api2img-api-key.dpapi.txt"
+$nodeCli = Join-Path (Split-Path -Parent $scriptDir) "bin\install.js"
 
 $keyExists = Test-Path -LiteralPath $keyFile
 $shouldPromptKey = $UpdateKey -or -not $keyExists
@@ -84,6 +85,10 @@ if ($Clear) {
   Remove-Item Env:\CODEX_API2IMG_BASE_URL -ErrorAction SilentlyContinue
   Remove-Item Env:\CODEX_API2IMG_API_KEY -ErrorAction SilentlyContinue
 
+  if (Test-Path -LiteralPath $nodeCli) {
+    node $nodeCli configure --clear | Out-Null
+  }
+
   Write-Host $messages[$resolvedLanguage].Cleared
   Write-Host $messages[$resolvedLanguage].KeyCleared
   Write-Host $messages[$resolvedLanguage].UrlCleared
@@ -137,6 +142,26 @@ if ($shouldPromptKey) {
 
 if (-not [string]::IsNullOrWhiteSpace($BaseUrl)) {
   [Environment]::SetEnvironmentVariable("CODEX_API2IMG_BASE_URL", $BaseUrl.TrimEnd("/"), "User")
+}
+
+if (Test-Path -LiteralPath $nodeCli) {
+  $nodeArgs = @("configure")
+  if (-not [string]::IsNullOrWhiteSpace($BaseUrl)) {
+    $nodeArgs += @("--base-url", $BaseUrl.TrimEnd("/"))
+  }
+
+  if ($shouldPromptKey) {
+    $bstr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureKey)
+    try {
+      $plainKey = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($bstr)
+      $nodeArgs += @("--api-key", $plainKey)
+    }
+    finally {
+      [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr)
+    }
+  }
+
+  node $nodeCli @nodeArgs | Out-Null
 }
 
 Write-Host $messages[$resolvedLanguage].Saved

@@ -6,6 +6,7 @@ $ErrorActionPreference = "Stop"
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $keyFile = Join-Path $scriptDir "api2img-api-key.dpapi.txt"
+$nodeCli = Join-Path (Split-Path -Parent $scriptDir) "bin\install.js"
 
 $apiKey = $null
 if (Test-Path -LiteralPath $keyFile) {
@@ -18,6 +19,22 @@ if (Test-Path -LiteralPath $keyFile) {
 $baseUrl = [Environment]::GetEnvironmentVariable("CODEX_API2IMG_BASE_URL", "Process")
 if ([string]::IsNullOrWhiteSpace($baseUrl)) {
   $baseUrl = [Environment]::GetEnvironmentVariable("CODEX_API2IMG_BASE_URL", "User")
+}
+
+$usedNodeFallback = $false
+if (([string]::IsNullOrWhiteSpace($apiKey) -or [string]::IsNullOrWhiteSpace($baseUrl)) -and (Test-Path -LiteralPath $nodeCli)) {
+  $stateJson = node $nodeCli env 2>$null
+  if ($LASTEXITCODE -eq 0 -or $stateJson) {
+    $state = $stateJson | ConvertFrom-Json
+    if ([string]::IsNullOrWhiteSpace($apiKey) -and -not [string]::IsNullOrWhiteSpace($state.apiKey)) {
+      $apiKey = $state.apiKey
+      $usedNodeFallback = $true
+    }
+    if ([string]::IsNullOrWhiteSpace($baseUrl) -and -not [string]::IsNullOrWhiteSpace($state.baseUrl)) {
+      $baseUrl = $state.baseUrl
+      $usedNodeFallback = $true
+    }
+  }
 }
 
 $missing = @()
@@ -41,3 +58,6 @@ $env:OPENAI_BASE_URL = $baseUrl.TrimEnd("/")
 
 Write-Host "api2img environment loaded for this PowerShell process only."
 Write-Host "CODEX_API2IMG_BASE_URL=$env:OPENAI_BASE_URL"
+if ($usedNodeFallback) {
+  Write-Host "api2img secrets source=Node cross-platform store"
+}

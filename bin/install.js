@@ -2,6 +2,8 @@
 
 const fs = require("fs");
 const path = require("path");
+const { main: cliMain } = require("../core/cli");
+const { AGENTS, SCOPES, detectAgent, resolveTarget } = require("../core/agent-targets");
 
 const packageRoot = path.resolve(__dirname, "..");
 const home = process.env.USERPROFILE || process.env.HOME;
@@ -18,9 +20,6 @@ const excludedNames = new Set([
   "output",
   ".git"
 ]);
-
-const AGENTS = new Set(["auto", "codex", "claude-code", "openclaw", "hermes", "generic"]);
-const SCOPES = new Set(["global", "project"]);
 
 function parseArgs(argv) {
   const options = {
@@ -102,42 +101,6 @@ function pathExists(targetPath) {
   }
 }
 
-function detectAgent(workspace) {
-  const checks = [
-    { agent: "claude-code", hit: pathExists(path.join(workspace, ".claude")) || pathExists(path.join(home, ".claude")) },
-    { agent: "openclaw", hit: pathExists(path.join(workspace, "skills")) || pathExists(path.join(home, ".openclaw")) },
-    { agent: "hermes", hit: pathExists(path.join(workspace, ".hermes")) || pathExists(path.join(home, ".hermes")) },
-    { agent: "codex", hit: pathExists(path.join(workspace, ".codex")) || pathExists(path.join(home, ".codex")) },
-  ];
-
-  const match = checks.find((item) => item.hit);
-  return match ? match.agent : "generic";
-}
-
-function resolveTarget(agent, scope, workspace, overrideTarget) {
-  if (overrideTarget) {
-    return overrideTarget;
-  }
-
-  const globalTargets = {
-    codex: path.join(home, ".codex", "skills", "api2img"),
-    "claude-code": path.join(home, ".claude", "commands", "api2img"),
-    openclaw: path.join(home, ".openclaw", "skills", "api2img"),
-    hermes: path.join(home, ".hermes", "skills", "api2img"),
-    generic: path.join(home, ".agent-skills", "api2img"),
-  };
-
-  const projectTargets = {
-    codex: path.join(workspace, ".codex", "skills", "api2img"),
-    "claude-code": path.join(workspace, ".claude", "commands", "api2img"),
-    openclaw: path.join(workspace, "skills", "api2img"),
-    hermes: path.join(workspace, ".hermes", "skills", "api2img"),
-    generic: path.join(workspace, ".agent-skills", "api2img"),
-  };
-
-  return scope === "project" ? projectTargets[agent] : globalTargets[agent];
-}
-
 function copyRecursive(source, destination) {
   const stat = fs.statSync(source);
 
@@ -215,8 +178,15 @@ function ensureWritableTarget(target, force) {
   }
 }
 
-function main() {
-  const options = parseArgs(process.argv.slice(2));
+async function main() {
+  const argv = process.argv.slice(2);
+  const delegatedCommands = new Set(["configure", "doctor", "env", "generate", "edit", "help"]);
+  if (argv.length > 0 && delegatedCommands.has(argv[0])) {
+    const exitCode = await cliMain(argv);
+    process.exit(exitCode);
+  }
+
+  const options = parseArgs(argv);
   const resolvedAgent = options.agent === "auto" ? detectAgent(options.workspace) : options.agent;
   const target = resolveTarget(resolvedAgent, options.scope, options.workspace, options.target);
   const plan = installPlan(resolvedAgent, target);

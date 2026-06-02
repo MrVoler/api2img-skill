@@ -8,19 +8,14 @@
 
 api2img is designed for people who use agents through a relay API and also need image generation and image editing.
 
-Supports:
-- `Codex`
-- `Claude Code`
-- `OpenClaw`
-- `Hermes`
-- `Any other compatible agent`
+Supports installable agents such as `Codex`, `Claude Code`, `OpenClaw`, and `Hermes`, and is also compatible with other agents that can be connected manually.
 
 ## Advantages
 
-- **Simple**: Install with one command and support automatic agent detection.
-- **Secure**: The API key is saved locally for the current Windows user with Windows DPAPI, so you do not need to paste the key into chat.
-- **Fully compatible**: Supports all agents that can install skills.
-- **No environment pollution**: The image API key uses an independent name and is stored securely. It does not overwrite your existing `OPENAI_API_KEY`, `OPENAI_BASE_URL`, or other variables, and is only mapped temporarily inside the child process.
+- **Simple**: Install with one command and supports automatic agent detection.
+- **Secure**: The API key is stored locally using the secure storage available on the current system whenever possible, so you do not need to paste the key into chat.
+- **Fully compatible**: Supports agents with installable skills on Windows, macOS, and Linux.
+- **No environment pollution**: The image API key uses an independent name and is stored securely. It does not overwrite your existing `OPENAI_API_KEY`, `OPENAI_BASE_URL`, or other variables.
 
 ## Installation
 
@@ -44,16 +39,16 @@ Built by a friend, low price with volume:
 
 - Personal request data is deleted every day, privacy-friendly
 - Supports image generation (1k image = RMB 0.01 each, 2k image = RMB 0.02 each, 4k image = RMB 0.03 each)
-- Supports both Claude Code and Codex (RMB 8.8 = USD 100 API quota, floor price, model can be verified)
+- Supports both Claude Code and Codex (RMB 8.8 = USD 100 API quota, very low price, model verification supported)
 
 ---
 
-## How To Use
+## Usage
 
-It will be automatically called by an agent when needed, and it can also be used directly for normal image generation, for example:
+It will be automatically called by the agent when needed, and you can also use it for regular image generation, for example:
 
 - [Generate] Generate an xxx image
-- [Edit] Replace a certain part of the image
+- [Edit] Replace a specific part of the image
 - [Upload] Modify xxx in the image I uploaded
 
 ## Supported Commands
@@ -61,14 +56,17 @@ It will be automatically called by an agent when needed, and it can also be used
 Tell the agent in natural language:
 
 ```powershell
-- Show the installation plan without actually installing
-- Global install (default): npx api2img
-- Project-level install: npx api2img
-- I want to modify the url and apikey of the api2img skill (changing only one of them is also supported)
-- I want to delete the url and apikey of the api2img skill
+Installation:
+- Install api2img as a global skill (default)
+- Install api2img into the current project
+
+Configuration:
+- Help me configure the base url for api2img
+- Help me update the api key for api2img
+- Help me clear the configuration of api2img
 ```
 
 ## Privacy Statement
 
-- This skill itself does not upload any of your data, and you can ask the agent to perform a security review.
+- This skill itself does not proactively upload your other local data, and you can also ask the Agent to perform a security review first.
 - When generating images, the uploaded images and prompts will be sent to the third-party relay provider you configured. Please avoid processing ID documents, faces, work secrets, or other private and sensitive content whenever possible.
